@@ -143,27 +143,28 @@ def outer_callback(queue_name):
 #
 ##############################################
 
-with gen_connection() as connection:
+if __name__ == '__main__':
+    with gen_connection() as connection:
 
-    queue = sys.argv[1]
+        queue = sys.argv[1]
 
-    channel = gen_channel(connection, queue)
+        channel = gen_channel(connection, queue)
 
-    channel.basic_consume(
-        outer_callback(queue),
-        queue=queue
-    )
+        channel.basic_consume(
+            outer_callback(queue),
+            queue=queue
+        )
 
-    # logging the life of a rabbit worker
-    # log_worker_life = PeriodicLog(
-    #     app_name    = "rabbitmq",
-    #     app_version = "0.1.22022018",
-    #     log_tb      = "log_devOps_rabbitmq_life",
-    #     log_detail  = queue,
-    #     period      = 600
-    # )
+        # logging the life of a rabbit worker
+        # log_worker_life = PeriodicLog(
+        #     app_name    = "rabbitmq",
+        #     app_version = "0.1.22022018",
+        #     log_tb      = "log_devOps_rabbitmq_life",
+        #     log_detail  = queue,
+        #     period      = 600
+        # )
 
-    print_waiting_message()
+        print_waiting_message()
 
-    # start consuming messages!
-    channel.start_consuming()
+        # start consuming messages!
+        channel.start_consuming()
