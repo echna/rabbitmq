@@ -40,3 +40,4 @@ send_rabbit_message(message=command, mode=queue_name)
     - port
     - Credentials (user name and password)
 2. Fix logging functionality and load its sql server, database and table configurations from a json as well.
+3. Make keyboard interruption more pretty
