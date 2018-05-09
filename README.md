@@ -1,16 +1,17 @@
 # Rabbit MQ
 
-## Description:
+## Description
 
-Scripts to run cmd line tasks asychronously using rabbitmq,
+Scripts to run cmd line tasks asychronously using rabbitmq.
 
-## Set up:
+## Set up
+
+Requires the sql_logging package [here](https://github.com/echna/sql_logging.git).
 
 At the moment the [connect.py](connect.py) file containts the rabbit MQ server and port information required to connect both the message consumer and sender.
 This should be moved into a config file and subsequently included into the build process.
 
-## Usage:
-
+## Usage
 
 ### [worker.py](worker.py)
 
