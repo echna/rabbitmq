@@ -4,7 +4,7 @@ def gen_connection():
 
     params = pika.ConnectionParameters(
         host='192.168.99.100',
-        port='32773',
+        port='32769',
         # credentials=pika.PlainCredentials('guest', 'guest'), 
         heartbeat_interval=20
     )

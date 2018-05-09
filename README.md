@@ -4,6 +4,11 @@
 
 Scripts to run cmd line tasks asychronously using rabbitmq,
 
+## Set up:
+
+At the moment the [connect.py](connect.py) file containts the rabbit MQ server and port information required to connect both the message consumer and sender.
+This should be moved into a config file and subsequently included into the build process.
+
 ## Usage:
 
 
