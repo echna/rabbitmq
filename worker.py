@@ -19,9 +19,10 @@ import json
 if __name__ == '__main__':
     if __package__ is None:
         sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        # from logging_sql.logging_sql import Log
-        # from logging_sql.logging_sql_periodic import PeriodicLog
         from connect import gen_connection, gen_channel
+        from logging_sql.logging_sql import Log
+        from logging_sql.logging_sql_periodic import PeriodicLog
+        
 
 ##############################################################
 # Done with loading libraries
@@ -81,17 +82,18 @@ def execute_cmd(ch, method, body, queue_name):
     # the rest as the actual message
     rabbit_message = body.decode().split()
 
-    command  = " ".join(rabbit_message[2:])
+    command  = " ".join(rabbit_message[3:])
 
     try:
-        # rabbit_work_log = Log(
-        #     app_name      = "rabbitmq", 
-        #     app_version   = "01.01.08052018", 
-        #     log_tb        = "log_devOps_rabbitmq", 
-        #     log_detail    = log_detail_gen(command, " ", queue_name),
-        #     login_machine = rabbit_message[1],
-        #     login_user    = rabbit_message[0]
-        # )
+        rabbit_work_log = Log(
+            app_name      = "rabbitmq", 
+            app_version   = "01.01.08052018", 
+            log_tb        = "log_devOps_rabbitmq", 
+            log_detail    = log_detail_gen(command, " ", queue_name),
+            user_machine  = rabbit_message[0],
+            user_ip       = rabbit_message[1],
+            user_name     = rabbit_message[2], 
+        )
 
         # actually execute the rabbit message in a shell
         sub_process = sp.Popen(command, shell=True, stdout=sp.PIPE, stderr=sp.STDOUT)
@@ -105,7 +107,7 @@ def execute_cmd(ch, method, body, queue_name):
 
         if exit_code == 0:
             # update the SQL log with success code
-            # rabbit_work_log.update(100, log_detail)
+            rabbit_work_log.update(100, log_detail)
             print(" [x] Process done.")
 
             print_waiting_message()
@@ -118,7 +120,7 @@ def execute_cmd(ch, method, body, queue_name):
 
     except sp.CalledProcessError as error:
         # update the SQL log with failure code
-        # rabbit_work_log.update(400, log_detail)
+        rabbit_work_log.update(400, log_detail)
         print(" [x] Process done, but failed:")
         print(error.output)
 
@@ -156,13 +158,13 @@ if __name__ == '__main__':
         )
 
         # logging the life of a rabbit worker
-        # log_worker_life = PeriodicLog(
-        #     app_name    = "rabbitmq",
-        #     app_version = "0.1.22022018",
-        #     log_tb      = "log_devOps_rabbitmq_life",
-        #     log_detail  = queue,
-        #     period      = 600
-        # )
+        log_worker_life = PeriodicLog(
+            app_name    = "rabbitmq",
+            app_version = "0.1.22022018",
+            log_tb      = "log_devOps_rabbitmq_life",
+            log_detail  = queue,
+            period      = 600
+        )
 
         print_waiting_message()
 

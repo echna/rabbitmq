@@ -7,7 +7,7 @@
 
 import sys
 import os
-from socket import gethostname
+from socket import gethostname, gethostbyname
 from getpass import getuser
 import pika
 
@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
         # prepend actual message with the user and machine name who send the message
         # these are used by the workers to log the usage of rabbitmq
-        message = getuser() + ' ' + gethostname() + ' ' + ' '.join(sys.argv[2:]) 
+        message = gethostname() + ' ' + gethostbyname(gethostname()) + ' ' + getuser() + ' ' + ' '.join(sys.argv[2:]) 
 
         channel = gen_channel(connection, queue)
 
