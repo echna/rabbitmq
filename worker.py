@@ -30,19 +30,17 @@ if __name__ == '__main__':
 
 def print_waiting_message():
     """ prints mesage whenever for whenever the worker is waiting for a message """
-
     print(' [*] Waiting for messages. To exit press CTRL+C then Enter')
 
 def log_detail_gen(command, detail, queue_name):
     """ generate a JSON string for the config column in the log table """
-
     log_detail = json.JSONEncoder().encode({
-        "command"     : command.replace("'",""),
-        "queue"       : queue_name,
+        "command" : command.replace("'",""),
+        "queue" : queue_name,
         "worker_host" : gethostname(),
         "worker_user" : getuser(),
-        "worker_ip"   : gethostbyname(gethostname()),
-        "detail"      : detail.replace("'","")
+        "worker_ip" : gethostbyname(gethostname()),
+        "detail" : detail.replace("'","")
     })
     
     return log_detail
@@ -86,23 +84,20 @@ def execute_cmd(ch, method, body, queue_name):
 
     try:
         rabbit_work_log = Log(
-            app_name      = "rabbitmq", 
-            app_version   = "01.01.08052018", 
-            log_tb        = "log_devOps_rabbitmq", 
-            log_detail    = log_detail_gen(command, " ", queue_name),
-            user_machine  = rabbit_message[0],
-            user_ip       = rabbit_message[1],
-            user_name     = rabbit_message[2], 
+            app_name = "rabbitmq", 
+            app_version = "01.01.08052018", 
+            log_tb = "log_devOps_rabbitmq", 
+            log_detail = log_detail_gen(command, " ", queue_name),
+            user_machine = rabbit_message[0],
+            user_ip = rabbit_message[1],
+            user_name = rabbit_message[2], 
         )
 
         # actually execute the rabbit message in a shell
         sub_process = sp.Popen(command, shell=True, stdout=sp.PIPE, stderr=sp.STDOUT)
-
         cmd_output = scrape_cmd_output(sub_process)
-
         log_detail = log_detail_gen(command, cmd_output, queue_name)
-
-        output    = sub_process.communicate()[0]
+        output = sub_process.communicate()[0]
         exit_code = sub_process.returncode
 
         if exit_code == 0:
@@ -132,7 +127,6 @@ def execute_cmd(ch, method, body, queue_name):
 # function that executes upon receipt of a new message
 def outer_callback(queue_name):
     """ function that gets called when a new message is received """
-    
     def callback(ch, method, properties, body):
         print(" [x] Received %r" % body)
         thread = threading.Thread(target=execute_cmd, args=(ch, method, body, queue_name))
@@ -147,9 +141,7 @@ def outer_callback(queue_name):
 
 if __name__ == '__main__':
     with gen_connection() as connection:
-
         queue = sys.argv[1]
-
         channel = gen_channel(connection, queue)
 
         channel.basic_consume(
@@ -159,14 +151,13 @@ if __name__ == '__main__':
 
         # logging the life of a rabbit worker
         log_worker_life = PeriodicLog(
-            app_name    = "rabbitmq",
+            app_name = "rabbitmq",
             app_version = "0.1.22022018",
-            log_tb      = "log_devOps_rabbitmq_life",
+            log_tb = "log_devOps_rabbitmq_life",
             log_detail  = queue,
-            period      = 600
+            period  = 600
         )
 
         print_waiting_message()
-
         # start consuming messages!
         channel.start_consuming()

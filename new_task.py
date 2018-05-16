@@ -17,7 +17,6 @@ if __name__ == '__main__':
         from connect import gen_connection, gen_channel
 
     with gen_connection() as connection:
-
         queue = sys.argv[1]
 
         # prepend actual message with the user and machine name who send the message
