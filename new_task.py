@@ -21,20 +21,17 @@ if __name__ == '__main__':
 
         # prepend actual message with the user and machine name who send the message
         # these are used by the workers to log the usage of rabbitmq
-        message = gethostname() + ' ' + gethostbyname(gethostname()) + ' ' + getuser() + ' ' + ' '.join(sys.argv[2:]) 
+        message = gethostname() + ' ' + gethostbyname(gethostname()) + ' ' + getuser() + ' ' + ' '.join(sys.argv[2:])
 
         channel = gen_channel(connection, queue)
 
         # send the message to the server via an implicit direct exchange directly to the queue
         channel.basic_publish(
-            exchange    = '',
-            routing_key = queue,
-            body		= message,
-            properties	= pika.BasicProperties(
-                delivery_mode = 2, # make message persistent
-            )
+            exchange='',
+            routing_key=queue,
+            body=message,
+            properties=pika.BasicProperties(delivery_mode=2)
         )
 
-    #confirmation message of message sent
+    # confirmation message of message sent
     print(" [x] Sent %r to %r" % (message, queue))
-
